@@ -1,11 +1,6 @@
 provider "proxmox" {
-  endpoint = "https://10.0.0.2:8006/"
+  endpoint = var.endpoint_url
+  api_token = var.proxmox_api
 
-  # TODO: use terraform variable or remove the line, and use PROXMOX_VE_USERNAME environment variable
-  username = var.proxmox-user
-  # TODO: use terraform variable or remove the line, and use PROXMOX_VE_PASSWORD environment variable
-  password = var.proxmox-password
-
-  # because self-signed TLS certificate is in use
   insecure = true
 }
