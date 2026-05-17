@@ -1,0 +1,7 @@
+myhosts:
+  hosts:
+    my_host_01:
+      ansible_host: 192.168.8.154
+  vars:
+    ansible_user: rei
+    ansible_python_interpreter: /usr/bin/python3

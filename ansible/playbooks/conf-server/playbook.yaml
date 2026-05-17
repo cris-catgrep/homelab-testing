@@ -1,0 +1,9 @@
+- name: Mi primer Playbook
+  hosts: myhosts
+  tasks:
+    - name: Ping a hosts
+      ansible.builtin.ping:
+
+    - name:
+      ansible.builtin.debug:
+        msg: Hello World
