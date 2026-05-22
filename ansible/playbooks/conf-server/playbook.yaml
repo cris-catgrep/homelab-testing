@@ -1,0 +1,59 @@
+- name: "Configuracion de ssh"
+  hosts: all
+  become: true
+  vars:
+    # Variables para el template con jinja2
+    ssh_port: 22
+    ssh_permit_root_login: "no"
+    ssh_pubkey_authentication: "yes"
+    ssh_password_authentication: "no"
+    ssh_max_auth_tries: 3
+    ssh_max_sessions: 5
+    ssh_login_grace_time: 30
+    ssh_client_alive_interval: 300
+    ssh_client_alive_count_max: 2
+  tasks:
+
+    - name: "Actualizar paquetes"
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        # autoremove: true
+        update_cache: true
+
+    - name: "Asegurarse de que ssh esta instalado"
+      ansible.builtin.dnf:
+        name: openssh-server
+        state: present
+
+
+### No es necesario crear una copia con el modulo copy ya que la propiedad "backup" lo crea de forma automatica ###
+#    - name : "Respaldar archivo de configuracion original"
+#      ansible.builtin.copy:
+#        src: /etc/ssh/sshd_config
+#        dest: /etc/ssh/sshd_config.bk
+#        remote_src: true
+#        mode: "0600"
+#        force: false
+
+    - name: "Configurar el archivo de configuracion ssh"
+      ansible.builtin.template:
+        src: templates/sshd_config.j2
+        dest: /etc/ssh/sshd_config
+        owner: root
+        group: root
+        mode: "0600"
+        backup: true
+        validate: "sshd -t -f %s"
+
+    - name: "Confirmar que el servicio de sshd  esta habilitado y corriendo"
+      ansible.builtin.service:
+        name: sshd
+        state: started
+        enabled: true
+
+  handlers:
+    - name: "Reiniciar sshd"
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
