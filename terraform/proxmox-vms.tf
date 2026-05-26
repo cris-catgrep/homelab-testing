@@ -1,10 +1,75 @@
 resource "proxmox_virtual_environment_vm" "rocky_vm" {
+  name        = "provisional"
+  description = "Creado y administrado por Terraform"
+  tags        = ["terraform", "rocky"]
+
+  node_name = var.node01_name
+  vm_id     = 201
+
+  # Solo se desactiva al tener Qemu instalado en la VM
+  #stop_on_destroy = true
+  agent {
+    # Solo se activa al tener Qemu instalado en la VM
+    enabled = false
+  }
+
+  cpu {
+    cores = 2
+    type  = var.cpu_type
+  }
+  memory {
+    dedicated = 2048
+    floating  = 2048
+  }
+
+  bios    = "ovmf"
+  machine = "q35"
+  efi_disk {
+    datastore_id = var.storage_vms
+    type         = "4m"
+  }
+
+  initialization {
+    user_account {
+      username = var.usuario_vm
+      keys     = [trimspace(data.local_file.ssh_key_rocky_pub.content)]
+      password = var.password_vm
+    }
+    ip_config {
+      ipv4 {
+        address = "192.168.8.91/24"
+        gateway = "192.168.8.1"
+      }
+    }
+  }
+
+  disk {
+    datastore_id = var.storage_vms
+    #import_from  = proxmox_download_file.rocky_cloud_image.id
+    interface = "virtio0"
+    iothread  = true
+    discard   = "on"
+    size      = 20
+  }
+
+  network_device {
+    bridge = "vmbr0"
+  }
+  operating_system {
+    type = var.os_type_linux
+  }
+  keyboard_layout = "es"
+
+}
+
+
+resource "proxmox_virtual_environment_vm" "rocky_vm_01" {
   name        = "prueba-rocky-cloud"
   description = "Creado y administrado por Terraform"
   tags        = ["terraform", "rocky"]
 
   node_name = var.node01_name
-  #vm_id = 
+  vm_id     = 101
 
   # Solo se desactiva al tener Qemu instalado en la VM
   stop_on_destroy = true
