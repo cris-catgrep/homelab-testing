@@ -1,0 +1,6 @@
+---
+- name: "Configuracion de servidores"
+  hosts: [dev, prod]
+  become: true
+  roles:
+    - role: base

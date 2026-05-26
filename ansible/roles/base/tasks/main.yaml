@@ -1,0 +1,27 @@
+- name: "Cambiar hostname del servidor"
+  ansible.builtin.hostname:
+    name: "{{ host_name }}"
+
+- name: "Asignar timezone"
+  community.general.timezone:
+    name: "{{ system_timezone }}"
+
+- name: "Habilitar repositorio epel"
+  ansible.builtin.dnf:
+    name:
+      - epel-release
+    state: present
+
+- name: "Instalar paquetes"
+  ansible.builtin.dnf:
+    name: "{{ base_items_a_instalar }}"
+    state: present
+
+- name: "Configurar SSH"
+  ansible.builtin.import_tasks: "ssh.yaml"
+
+- name: "Configurar Firewalld"
+  ansible.builtin.import_tasks: "firewalld.yaml"
+
+- name: "Configurar dnf-automatic"
+  ansible.builtin.import_tasks: "dnf-automatic.yaml"

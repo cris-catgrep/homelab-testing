@@ -1,0 +1,10 @@
+# Variables para rol Base
+
+items_a_instalar:
+  - podman
+  - podman-compose
+  - firewalld
+  - fail2ban
+  - locate
+  - neovim
+  - dnf-automatic

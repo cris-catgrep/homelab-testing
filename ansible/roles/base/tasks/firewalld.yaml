@@ -1,0 +1,28 @@
+- name: "Iniciar firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+
+- name: "Permitir SSH"
+  ansible.posix.firewalld:
+    service: "ssh"
+    state: enabled
+    permanent: true
+    immediate: true
+    offline: true
+
+- name: "Permitir HTTP"
+  ansible.posix.firewalld:
+    service: "http"
+    state: enabled
+    permanent: true
+    immediate: true
+    offline: true
+
+- name: "Permitir HTTPS"
+  ansible.posix.firewalld:
+    service: "https"
+    state: enabled
+    permanent: true
+    immediate: true
+    offline: true
