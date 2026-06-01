@@ -1,0 +1,25 @@
+[Unit]
+Description=Contenedor de fireflyiii
+After=firefly-db.service
+Requires=firefly-db.service
+
+[Container]
+# Base options
+AutoUpdate=registry
+ContainerName=fireflyiii-app
+Image=docker.io/fireflyiii/core:latest
+
+# Network options
+PublishPort=8089:8080
+HostName=app
+Network=firefly.network
+EnvironmentFile=/home/rei/cont/fireflyiii/.env
+
+Volume=firefly_iii_upload:/var/www/html/storage/upload
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+

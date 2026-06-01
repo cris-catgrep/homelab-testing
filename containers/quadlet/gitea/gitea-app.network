@@ -1,0 +1,4 @@
+[Network]
+# Other options
+Driver=bridge
+

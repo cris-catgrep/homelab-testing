@@ -1,11 +1,11 @@
 all:
   children:
-    dev:
+    prod:
       hosts:
         my_host_00:
           ansible_host: 192.168.8.91
           host_name: "Eva-01"
-    prod:
+    dev:
       hosts:
         my_host_01:
           ansible_host: 192.168.8.90

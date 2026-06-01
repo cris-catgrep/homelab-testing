@@ -1,0 +1,5 @@
+- name: "Configurar user y groupids para el usuario"
+  ansible.builtin.command: "sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 rei"
+
+- name: "Podman system migrate"
+  ansible.builtin.command: "podman system migrate"

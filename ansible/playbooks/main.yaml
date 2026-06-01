@@ -1,6 +1,6 @@
 ---
 - name: "Configuracion de servidores"
-  hosts: [dev, prod]
+  hosts: dev
   become: true
   roles:
-    - role: base
+    - podman-server

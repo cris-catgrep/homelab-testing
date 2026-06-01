@@ -1,0 +1,26 @@
+[Unit]
+Description=Gitea container
+
+[Container]
+ContainerName=gitea
+Image=docker.gitea.com/gitea:latest
+AutoUpdate=registry
+Environment=USER_UID=1000
+Environment=USER_GID=1000
+PublishPort=3000:3000
+PublishPort=2222:22
+Pull=newer
+Volume=/home/rei/cont/gitea:data:Z,U
+Network=gitea
+
+HealthCmd=/bin/curlcurl -k --fail --connect-timeout 5 \
+  https://127.0.0.1:3000/api/healthz
+HealthRetries=10
+HealthStartPeriod=15s
+HealthTimeout=15s
+[Service]
+Restart=on-failure
+UserNS=keep-id
+
+[Install]
+WantedBy=default.target

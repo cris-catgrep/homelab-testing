@@ -1,0 +1,25 @@
+[Unit]
+Description=Contenedor de base de datos de fireflyiii
+
+[Container]
+# Base options
+AutoUpdate=registry
+ContainerName=fireflyiii-db
+Image=docker.io/library/mariadb/lts
+
+# Storage options
+Volume=firefly_iii_db:/var/lib/mysql
+
+# Network options
+HostName=db
+Network=firefly.network
+
+# Environment options
+EnvironmentFile=/home/rei/cont/fireflyiii/.db.env
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+

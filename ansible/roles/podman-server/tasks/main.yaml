@@ -1,0 +1,5 @@
+- name: "Configurar podman rootless"
+  ansible.builtin.import_tasks: "rootless-config.yaml"
+
+- name: "Desplegar contenedores rootless"
+  ansible.builtin.import_tasks: "contenedores.yaml"

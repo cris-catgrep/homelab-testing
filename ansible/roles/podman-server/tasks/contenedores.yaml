@@ -1,0 +1,21 @@
+- name: "Creacion de quadlet de gitea"
+  become: false
+  containers.podman.podman_container:
+    name: "gitea"
+    image: docker.gitea.com/gitea:latest
+    state: quadlet
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    network: "gitea"
+    env:
+      USER_UID=1000
+      USER_GID=1000
+    volumes:
+      - "/home/rei/cont/gitea:data:Z,U"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - "Pull=newer"
+      - |
+        [Install]
+        WantedBy=default.target
