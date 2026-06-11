@@ -2,7 +2,6 @@
 
 base_items_a_instalar:
   - podman
-  - podman-compose
   - firewalld
   - fail2ban
   - locate

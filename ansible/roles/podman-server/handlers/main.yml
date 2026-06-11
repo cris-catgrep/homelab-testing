@@ -1,0 +1,14 @@
+- name: "Reiniciar server"
+  ansible.builtin.reboot:
+    msg: "Ansible-initiated reboot"
+    reboot_timeout: 600
+    pre_reboot_delay: 60
+    post_reboot_delay: 30
+    connect_timeout: 5
+    test_command: uptime
+
+- name: "Daemon-reload"
+  become: false
+  ansible.builtin.systemd_service:
+    scope: "user"
+    daemon_reload: true

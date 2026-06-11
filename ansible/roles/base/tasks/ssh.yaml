@@ -19,6 +19,7 @@
     mode: "0600"
     backup: true
     validate: "sshd -t -f %s"
+  notify: "Reiniciar sshd"
 
 - name: "Confirmar que el servicio de sshd  esta habilitado y corriendo"
   ansible.builtin.service:

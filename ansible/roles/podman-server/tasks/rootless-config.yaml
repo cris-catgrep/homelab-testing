@@ -1,5 +1,26 @@
+- name: "Tomar output de cgroups"
+  ansible.builtin.command: "stat -fc %T /sys/fs/cgroup"
+  register: cgroups
+  changed_when: false
+
+- name: "Activar cgroups2fs y reiniciar"
+  ansible.builtin.command: 'sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=1"'
+  register: config_result
+  changed_when: config_result.rc == 1
+  notify: "Reiniciar server"
+  when: cgroups.stdout.find("cgroups2fs") != -1
+
 - name: "Configurar user y groupids para el usuario"
   ansible.builtin.command: "sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 rei"
+  register: config_result
+  changed_when: config_result.rc == 1
 
 - name: "Podman system migrate"
   ansible.builtin.command: "podman system migrate"
+  register: config_result
+  changed_when: config_result.rc == 1
+
+- name: "Activar linger"
+  ansible.builtin.command: "loginctl enable-linger rei"
+  register: config_result
+  changed_when: config_result.rc == 1
