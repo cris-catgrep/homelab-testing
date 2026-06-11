@@ -18,8 +18,8 @@ resource "proxmox_virtual_environment_vm" "rocky_vm" {
     type  = var.cpu_type
   }
   memory {
-    dedicated = 2048
-    floating  = 2048
+    dedicated = 4096
+    floating  = 4096
   }
 
   bios    = "ovmf"
