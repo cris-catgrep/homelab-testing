@@ -2,33 +2,55 @@
   become: false
   containers.podman.podman_network:
     state: quadlet
-    name: "gitea-app"
+    name: "{{ item.name }}"
+  loop:
+    - name: "gitea-app"
 
 - name: "Creacion de quadlet gitea"
   become: false
   containers.podman.podman_container:
-    name: "gitea-app"
-    image: "docker.gitea.com/gitea:latest"
+    name: "{{ item.name }}"
+    image: "{{ item.image }}"
     state: quadlet
-    ports:
-      - "3000:3000"
-      - "2222:22"
-    volume:
-      - "/home/rei/cont/gitea:/data:Z,U"
-    network: "gitea-app.network"
-    env:
-      USER_UID: "1000"
-      USER_GID: "1000"
+    ports: "{{ item.ports | default(omit) }}"
+    volume: "{{ item.volumes | default(omit) }}"
+    network: "{{ item.network | default(omit) }}"
+    env: "{{ item.env | default(omit) }}"
+    quadlet_options: "{{ item.quadlet_options }}"
+  loop:
+    - name: "hello-world"
+      image: "docker.io/hello-world:latest"
+      quadlet_options:
+        - "AutoUpdate=registry"
+        - "Pull=newer"
+        - |
+          [Service]
+          Restart=allways
+        - |
+         [Install]
+         WantedBy=default.target
 
-    quadlet_options:
-      - "AutoUpdate=registry"
-      - "Pull=newer"
-      - |
-        [Service]
-        Restart=allways
-      - |
-       [Install]
-       WantedBy=default.target
+    - name: "gitea-app"
+      image: "docker.gitea.com/gitea:latest"
+      ports:
+        - "3000:3000"
+        - "2222:22"
+      volumes:
+        - "/home/rei/cont/gitea:/data:Z,U"
+      network: "gitea-app.network"
+      env:
+        USER_UID: "1000"
+        USER_GID: "1000"
+
+      quadlet_options:
+        - "AutoUpdate=registry"
+        - "Pull=newer"
+        - |
+          [Service]
+          Restart=allways
+        - |
+         [Install]
+         WantedBy=default.target
   notify: "Daemon-reload"
 
 - name: "Iniciar quadlet gitea"
