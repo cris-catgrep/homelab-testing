@@ -11,7 +11,7 @@
   when: cgroups.stdout.find("cgroups2fs") != -1
 
 - name: "Configurar user y groupids para el usuario"
-  ansible.builtin.command: "sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 rei"
+  ansible.builtin.command: "sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 {{ ansible_user }}"
   register: config_result
   changed_when: config_result.rc == 1
 
@@ -21,6 +21,6 @@
   changed_when: config_result.rc == 1
 
 - name: "Activar linger"
-  ansible.builtin.command: "loginctl enable-linger rei"
+  ansible.builtin.command: "loginctl enable-linger {{ ansible_user }}"
   register: config_result
   changed_when: config_result.rc == 1

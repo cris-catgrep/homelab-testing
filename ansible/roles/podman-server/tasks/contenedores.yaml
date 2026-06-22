@@ -1,12 +1,24 @@
-- name: "Creacion de red gitea"
+- name: "Crear directorios de contenedores"
+  become: false
+  ansible.builtin.file:
+    path: "{{ podman_server_vol_path }}/{{ item.name }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - name: "syncthing"
+    - name: "gitea"
+    - name: "firefly"
+
+- name: "Creacion de redes quadlet"
   become: false
   containers.podman.podman_network:
     state: quadlet
     name: "{{ item.name }}"
   loop:
     - name: "gitea-app"
+    - name: "syncthing"
 
-- name: "Creacion de quadlet gitea"
+- name: "Creacion de quadlets"
   become: false
   containers.podman.podman_container:
     name: "{{ item.name }}"
@@ -18,25 +30,13 @@
     env: "{{ item.env | default(omit) }}"
     quadlet_options: "{{ item.quadlet_options }}"
   loop:
-    - name: "hello-world"
-      image: "docker.io/hello-world:latest"
-      quadlet_options:
-        - "AutoUpdate=registry"
-        - "Pull=newer"
-        - |
-          [Service]
-          Restart=allways
-        - |
-         [Install]
-         WantedBy=default.target
-
     - name: "gitea-app"
       image: "docker.gitea.com/gitea:latest"
       ports:
         - "3000:3000"
         - "2222:22"
       volumes:
-        - "/home/rei/cont/gitea:/data:Z,U"
+        - "{{ podman_server_vol_path }}/gitea:/data:Z,U"
       network: "gitea-app.network"
       env:
         USER_UID: "1000"
@@ -51,6 +51,28 @@
         - |
          [Install]
          WantedBy=default.target
+    - name: "syncthing-app"
+      image: "lscr.io/linuxserver/syncthing:latest"
+      ports:
+        - "8384:8384"
+        - "22000:22000/tcp"
+        - "22000:22000/udp"
+        - "21027:21027/udp"
+      volumes:
+        - "{{ podman_server_vol_path }}/syncthing:/data:Z,U"
+      network: "syncthing.network"
+      env:
+        PUID: "1000"
+        PGID: "1000"
+      quadlet_options:
+        - "AutoUpdate=registry"
+        - "Pull=newer"
+        - |
+          [Service]
+          Restart=unless-stopped
+        - |
+         [Install]
+         WantedBy=default.target
   notify: "Daemon-reload"
 
 - name: "Iniciar quadlet gitea"
@@ -58,4 +80,11 @@
   ansible.builtin.systemd_service:
     scope: user
     name: gitea-app
+    state: started
+
+- name: "Iniciar quadlet syncthing"
+  become: false
+  ansible.builtin.systemd_service:
+    scope: user
+    name: syncthing-app
     state: started
