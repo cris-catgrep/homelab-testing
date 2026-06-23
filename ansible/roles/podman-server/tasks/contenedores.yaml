@@ -88,3 +88,16 @@
     scope: user
     name: syncthing-app
     state: started
+
+- name: "Permitir acceso syncthing"
+  ansible.posix.firewalld:
+    port: "{{ item.port }}"
+    state: enabled
+    permanent: true
+    immediate: true
+    offline: true
+  loop:
+    - port: 8384/tcp
+    - port: 22000/tcp
+    - port: 22000/udp
+    - port: 21027/udp
