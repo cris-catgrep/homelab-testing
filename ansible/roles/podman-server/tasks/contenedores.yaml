@@ -87,15 +87,28 @@
     name: syncthing-app
     state: started
 
+<<<<<<< HEAD
 - name: "Activar puertos Syncthing"
   ansible.posix.firewalld:
     port: "{{ item }}"
+=======
+- name: "Permitir acceso syncthing"
+  ansible.posix.firewalld:
+    port: "{{ item.port }}"
+>>>>>>> refs/remotes/origin/Dev
     state: enabled
     permanent: true
     immediate: true
     offline: true
   loop:
+<<<<<<< HEAD
     - 8384/tcp
     - 22000/tcp
     - 22000/udp
     - 21027/udp
+=======
+    - port: 8384/tcp
+    - port: 22000/tcp
+    - port: 22000/udp
+    - port: 21027/udp
+>>>>>>> refs/remotes/origin/Dev
