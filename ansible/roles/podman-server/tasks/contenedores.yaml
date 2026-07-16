@@ -52,7 +52,7 @@
          [Install]
          WantedBy=default.target
     - name: "syncthing-app"
-      image: "lscr.io/linuxserver/syncthing:latest"
+      image: "docker.io/syncthing/syncthing:latest"
       ports:
         - "8384:8384"
         - "22000:22000/tcp"
@@ -61,12 +61,10 @@
       volumes:
         - "{{ podman_server_vol_path }}/syncthing:/data:Z,U"
       network: "syncthing.network"
-      env:
-        PUID: "1000"
-        PGID: "1000"
       quadlet_options:
         - "AutoUpdate=registry"
         - "Pull=newer"
+        - "UserNS=keep-id:uid=1000,gid=1000"
         - |
           [Service]
           Restart=unless-stopped
@@ -88,3 +86,16 @@
     scope: user
     name: syncthing-app
     state: started
+
+- name: "Activar puertos Syncthing"
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+    offline: true
+  loop:
+    - 8384/tcp
+    - 22000/tcp
+    - 22000/udp
+    - 21027/udp
